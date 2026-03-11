@@ -9,14 +9,18 @@
   "scripts": {
     "publishFeed": "ts-node scripts/publishFeedGen.ts",
     "unpublishFeed": "ts-node scripts/unpublishFeedGen.ts",
+    "downloadFirehoseTestdata": "ts-node scripts/downloadFirehoseTestdata.ts",
+    "extractShortenedLinkExamples": "ts-node scripts/extractShortenedLinkExamples.ts",
     "start": "ts-node src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@atproto/api": "^0.13.28",
-    "@atproto/identity": "^0.2.1",
+    "@atproto/identity": "^0.4.12",
     "@atproto/lexicon": "^0.2.2",
-    "@atproto/repo": "^0.3.2",
+    "@atproto/repo": "^0.5.3",
     "@atproto/syntax": "^0.1.2",
     "@atproto/xrpc-server": "^0.7.9",
     "better-sqlite3": "^11.3.0",
@@ -31,7 +35,8 @@
     "@types/node": "^20.1.2",
     "inquirer": "^12.0.1",
     "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.0"
   },
   "engines": {
     "node": ">= 18",

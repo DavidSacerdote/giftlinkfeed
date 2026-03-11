@@ -1,0 +1,72 @@
+{
+  "_meta": {
+    "description": "Example posts with shortened links for unit tests (run scripts/extractShortenedLinkExamples.ts to regenerate from firehose testdata)",
+    "count": 6,
+    "source": "hand-crafted; replace with firehose-posts-100k.json output when available",
+    "extractedAt": "2025-01-01T00:00:00.000Z"
+  },
+  "posts": [
+    {
+      "uri": "at://did:example:alice/app.bsky.feed.post/1",
+      "cid": "bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi",
+      "author": "did:example:alice",
+      "record": {
+        "text": "Check this out https://t.co/abc123",
+        "createdAt": "2024-01-01T00:00:00.000Z"
+      }
+    },
+    {
+      "uri": "at://did:example:bob/app.bsky.feed.post/2",
+      "cid": "bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi",
+      "author": "did:example:bob",
+      "record": {
+        "text": "NYT gift link: https://nyti.ms/xyz789",
+        "createdAt": "2024-01-01T00:00:00.000Z"
+      }
+    },
+    {
+      "uri": "at://did:example:carol/app.bsky.feed.post/3",
+      "cid": "bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi",
+      "author": "did:example:carol",
+      "record": {
+        "text": "Read more https://bit.ly/def456",
+        "createdAt": "2024-01-01T00:00:00.000Z"
+      }
+    },
+    {
+      "uri": "at://did:example:dave/app.bsky.feed.post/4",
+      "cid": "bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi",
+      "author": "did:example:dave",
+      "record": {
+        "text": "No link here",
+        "createdAt": "2024-01-01T00:00:00.000Z"
+      }
+    },
+    {
+      "uri": "at://did:example:eve/app.bsky.feed.post/5",
+      "cid": "bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi",
+      "author": "did:example:eve",
+      "record": {
+        "text": "Article",
+        "embed": {
+          "$type": "app.bsky.embed.external#main",
+          "external": {
+            "uri": "https://t.co/linkcard",
+            "title": "Title",
+            "description": "Desc"
+          }
+        },
+        "createdAt": "2024-01-01T00:00:00.000Z"
+      }
+    },
+    {
+      "uri": "at://did:example:frank/app.bsky.feed.post/6",
+      "cid": "bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi",
+      "author": "did:example:frank",
+      "record": {
+        "text": "Direct gift link https://nytimes.com/something?unlocked_article_code=ABC",
+        "createdAt": "2024-01-01T00:00:00.000Z"
+      }
+    }
+  ]
+}
