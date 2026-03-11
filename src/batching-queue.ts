@@ -16,7 +16,9 @@ export class BatchingQueue<T> {
 
   push(...items: T[]): void {
     if (items.length === 0) return
-    this.pending.push(...items)
+    for (let i = 0; i < items.length; i++) {
+      this.pending.push(items[i])
+    }
     this.tryFlush()
   }
 

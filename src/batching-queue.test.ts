@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it } from 'node:test'
+import assert from 'node:assert'
 import path from 'path'
 import fs from 'fs'
 import { BatchingQueue } from './batching-queue'
@@ -7,9 +8,13 @@ const TESTDATA_100K = path.join(__dirname, '..', 'testdata', 'firehose-posts-100
 const BATCH_SIZE = 100
 const BATCH_TIMEOUT_MS = 1000
 
+function delay(ms: number): Promise<void> {
+  return new Promise((r) => setTimeout(r, ms))
+}
+
 describe('BatchingQueue', () => {
   describe('chunking with 100k messages from testdata', () => {
-    it('flushes exactly 1000 batches of 100 when 100k posts are pushed', async () => {
+    it('flushes exactly 1000 batches of 100 when 100k posts are pushed', { timeout: 60_000 }, async () => {
       if (!fs.existsSync(TESTDATA_100K)) {
         console.warn(`Skipping: ${TESTDATA_100K} not found. Run yarn downloadFirehoseTestdata first.`)
         return
@@ -36,24 +41,21 @@ describe('BatchingQueue', () => {
         },
       })
 
-      queue.push(...posts.slice(0, 100_000))
+      const toPush = posts.slice(0, 100_000)
+      const CHUNK = 5000
+      for (let i = 0; i < toPush.length; i += CHUNK) {
+        queue.push(...toPush.slice(i, i + CHUNK))
+      }
       await drainPromise
 
-      expect(batchSizes).toHaveLength(1000)
-      expect(batchSizes.every((len) => len === BATCH_SIZE)).toBe(true)
-      expect(batchSizes.reduce((a, b) => a + b, 0)).toBe(100_000)
-    }, 60_000)
+      assert.strictEqual(batchSizes.length, 1000)
+      assert.strictEqual(batchSizes.every((len) => len === BATCH_SIZE), true)
+      assert.strictEqual(batchSizes.reduce((a, b) => a + b, 0), 100_000)
+    })
   })
 
   describe('timeout flush when < batch size', () => {
-    beforeEach(() => {
-      vi.useFakeTimers()
-    })
-    afterEach(() => {
-      vi.useRealTimers()
-    })
-
-    it('flushes accumulated posts after timeout when fewer than batchSize', async () => {
+    it('flushes accumulated posts after timeout when fewer than batchSize', { timeout: 5000 }, async () => {
       const batchSizes: number[] = []
       const queue = new BatchingQueue<{ id: number }>({
         batchSize: BATCH_SIZE,
@@ -64,18 +66,15 @@ describe('BatchingQueue', () => {
       })
 
       queue.push(...Array.from({ length: 50 }, (_, i) => ({ id: i })))
-      expect(batchSizes).toHaveLength(0)
+      assert.strictEqual(batchSizes.length, 0)
 
-      await vi.advanceTimersByTimeAsync(BATCH_TIMEOUT_MS)
+      await delay(BATCH_TIMEOUT_MS + 50)
 
-      await vi.runAllTimersAsync?.() ?? Promise.resolve()
-      await vi.advanceTimersByTimeAsync(0)
-
-      expect(batchSizes).toHaveLength(1)
-      expect(batchSizes[0]).toBe(50)
+      assert.strictEqual(batchSizes.length, 1)
+      assert.strictEqual(batchSizes[0], 50)
     })
 
-    it('flushes 100 immediately when batchSize reached', async () => {
+    it('flushes 100 immediately when batchSize reached', { timeout: 5000 }, async () => {
       const batchSizes: number[] = []
       const queue = new BatchingQueue<{ id: number }>({
         batchSize: BATCH_SIZE,
@@ -87,20 +86,20 @@ describe('BatchingQueue', () => {
 
       queue.push(...Array.from({ length: 150 }, (_, i) => ({ id: i })))
 
-      await vi.advanceTimersByTimeAsync(0)
+      await delay(0)
 
-      expect(batchSizes).toHaveLength(1)
-      expect(batchSizes[0]).toBe(100)
+      assert.strictEqual(batchSizes.length, 1)
+      assert.strictEqual(batchSizes[0], 100)
 
-      await vi.advanceTimersByTimeAsync(0)
+      await delay(BATCH_TIMEOUT_MS + 50)
 
-      expect(batchSizes).toHaveLength(2)
-      expect(batchSizes[1]).toBe(50)
+      assert.strictEqual(batchSizes.length, 2)
+      assert.strictEqual(batchSizes[1], 50)
     })
   })
 
   describe('mixed: size-triggered and timeout-triggered', () => {
-    it('processes 250 as two full batches then starts timer for remainder', async () => {
+    it('processes 250 as two full batches then starts timer for remainder', { timeout: 5000 }, async () => {
       const batchSizes: number[] = []
       const queue = new BatchingQueue<{ id: number }>({
         batchSize: 100,
@@ -112,16 +111,16 @@ describe('BatchingQueue', () => {
 
       queue.push(...Array.from({ length: 250 }, (_, i) => ({ id: i })))
 
-      await new Promise((r) => setTimeout(r, 50))
+      await delay(50)
 
-      expect(batchSizes).toHaveLength(2)
-      expect(batchSizes[0]).toBe(100)
-      expect(batchSizes[1]).toBe(100)
+      assert.strictEqual(batchSizes.length, 2)
+      assert.strictEqual(batchSizes[0], 100)
+      assert.strictEqual(batchSizes[1], 100)
 
-      await new Promise((r) => setTimeout(r, 1100))
+      await delay(1100)
 
-      expect(batchSizes).toHaveLength(3)
-      expect(batchSizes[2]).toBe(50)
-    }, 5000)
+      assert.strictEqual(batchSizes.length, 3)
+      assert.strictEqual(batchSizes[2], 50)
+    })
   })
 })
