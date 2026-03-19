@@ -11,7 +11,7 @@ export const RESOLVE_REDIRECT_HOSTS = new Set([
   'nyti.ms', 'theatln.tc', 'wapo.st', 'go.nature.com',
   'bit.ly', 't.co', 'ow.ly', 'is.gd', 'tinyurl.com', 'buff.ly', 'j.mp', 'goo.gl',
   'youtu.be', 'amzn.to', 'fb.me', 'lnkd.in', 'tiny.cc', 'adf.ly', 'tr.im',
-  'short.link', 'cutt.ly', 'rebrand.ly', 'bl.ink', 'short.io', 'linktr.ee', 'bloom.bg',
+  'short.link', 'cutt.ly', 'rebrand.ly', 'bl.ink', 'short.io', 'linktr.ee', 'bloom.bg', 'shorturl.at',
 ])
 
 export const URL_IN_TEXT_REGEX = /https?:\/\/[^\s<>"'\])]+/g
